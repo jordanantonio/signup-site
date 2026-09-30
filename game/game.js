@@ -10,7 +10,7 @@ const savedNameKey = `teamzeuss:name:${leagueId}:${gameId}`;
 let game = null;
 let players = [];
 let signups = [];
-let chosenPlayer = null;
+let signupsLoaded = false;
 let activePlayer = null;
 
 function status(id, text, success = false) {
@@ -36,10 +36,13 @@ function render() {
     const signup = currentSignup();
     const place = confirmed.findIndex((person) => person.id === activePlayer.id);
     const wait = queue.findIndex((person) => person.id === activePlayer.id);
-    $("my-status").textContent = signup ? (place >= 0 ? `You are playing (#${place + 1}).` : `You are on the waitlist (#${wait + 1}).`) : "You have not joined this game.";
-    $("join-button").textContent = confirmed.length >= CAPACITY ? "Join waitlist" : "Playing";
-    $("join-button").hidden = !!signup || game.status !== "open";
-    $("leave-button").hidden = !signup || game.status !== "open";
+    $("my-status").textContent = !signupsLoaded ? "Checking your status…" :
+      signup ? (place >= 0 ? `You are playing (#${place + 1}).` : `You are on the waitlist (#${wait + 1}).`) :
+      game.status === "open" ? (confirmed.length >= CAPACITY ? "You can join the waitlist." : "You can play.") : "You did not join this game.";
+    $("join-button").textContent = confirmed.length >= CAPACITY ? "Join Waitlist" : "Can Play";
+    $("join-button").hidden = !signupsLoaded || !!signup || game.status !== "open";
+    $("leave-button").textContent = wait >= 0 ? "Leave waitlist" : "Not Playing";
+    $("leave-button").hidden = !signupsLoaded || !signup || game.status !== "open";
   }
   for (const [target, people] of [["confirmed-list", confirmed], ["waitlist-list", queue]]) {
     const list = $(target);
@@ -63,6 +66,15 @@ function hideOptions() {
   $("name-input").setAttribute("aria-expanded", "false");
 }
 
+function selectPlayer(player) {
+  activePlayer = player;
+  sessionStorage.setItem(savedNameKey, player.id);
+  $("name-input").value = "";
+  hideOptions();
+  status("signup-message", "");
+  render();
+}
+
 function showOptions() {
   const input = $("name-input");
   const list = $("name-options");
@@ -76,10 +88,7 @@ function showOptions() {
     button.type = "button";
     button.textContent = player.name;
     button.addEventListener("click", () => {
-      input.value = player.name;
-      chosenPlayer = player;
-      input.focus();
-      hideOptions();
+      selectPlayer(player);
     });
     li.append(button);
     list.append(li);
@@ -88,7 +97,7 @@ function showOptions() {
   input.setAttribute("aria-expanded", String(!list.hidden));
 }
 
-$("name-input").addEventListener("input", () => { chosenPlayer = null; showOptions(); });
+$("name-input").addEventListener("input", showOptions);
 $("name-input").addEventListener("focus", showOptions);
 $("name-input").addEventListener("keydown", (event) => {
   if (event.key === "Escape") hideOptions();
@@ -101,15 +110,9 @@ document.addEventListener("click", (event) => { if (!event.target.closest(".name
 
 $("name-form").addEventListener("submit", (event) => {
   event.preventDefault();
-  const player = chosenPlayer || players.find((item) => item.name.toLocaleLowerCase() === $("name-input").value.trim().toLocaleLowerCase());
+  const player = players.find((item) => item.name.toLocaleLowerCase() === $("name-input").value.trim().toLocaleLowerCase());
   if (!player) return status("signup-message", "Choose a name from the suggestions.");
-  activePlayer = player;
-  sessionStorage.setItem(savedNameKey, player.id);
-  $("name-input").value = "";
-  chosenPlayer = null;
-  hideOptions();
-  status("signup-message", "");
-  render();
+  selectPlayer(player);
 });
 
 $("change-name").addEventListener("click", () => {
@@ -186,14 +189,14 @@ if (!leagueId || !gameId) {
   }, () => status("page-message", "Could not load this game."));
   onSnapshot(collection(db, "leagues", leagueId, "players"), (snapshot) => {
     players = snapshot.docs.map((item) => ({ id: item.id, ...item.data() })).sort((a, b) => a.name.localeCompare(b.name));
-    if (!activePlayer) {
-      const savedId = sessionStorage.getItem(savedNameKey);
-      activePlayer = players.find((player) => player.id === savedId) || null;
-    }
+    const selectedId = activePlayer?.id || sessionStorage.getItem(savedNameKey);
+    activePlayer = players.find((player) => player.id === selectedId) || null;
+    if (selectedId && !activePlayer) sessionStorage.removeItem(savedNameKey);
     render();
   }, () => status("signup-message", "Could not load names."));
   onSnapshot(collection(db, "leagues", leagueId, "games", gameId, "signups"), (snapshot) => {
     signups = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+    signupsLoaded = true;
     render();
   }, () => status("signup-message", "Could not load signups."));
 }

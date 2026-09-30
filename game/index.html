@@ -17,14 +17,14 @@
       </div>
       <p id="spot-count" class="count"></p>
       <form id="name-form" class="signup-form" autocomplete="off">
-        <label for="name-input">Login</label>
-        <div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Type your name" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div><button type="submit">login</button></div>
+        <label for="name-input">Find your name</label>
+        <div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Type your name, then choose it" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div></div>
       </form>
       <div id="player-panel" hidden>
         <p class="signed-in">Name: <strong id="selected-name"></strong> <button id="change-name" type="button" class="link-button">Change</button></p>
         <p id="my-status" class="status-line" aria-live="polite"></p>
-        <button id="join-button" type="button">Playing</button>
-        <button id="leave-button" type="button" class="secondary" hidden>Leave</button>
+        <button id="join-button" type="button">Can Play</button>
+        <button id="leave-button" type="button" class="secondary" hidden>Not Playing</button>
       </div>
       <p id="signup-message" class="message" role="status" aria-live="polite"></p>
       <div class="lists"><section><h3>Playing</h3><ol id="confirmed-list"></ol></section><section><h3>Waitlist</h3><ol id="waitlist-list"></ol></section></div>
