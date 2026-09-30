@@ -129,7 +129,7 @@ function renderGames() {
       catch { message("Could not update this game."); button.disabled = false; }
     }));
     const view = document.createElement("a");
-    view.href = `../#${new URLSearchParams({ league: leagueId, game: game.id })}`;
+    view.href = `../game/?${new URLSearchParams({ league: leagueId, game: game.id })}`;
     view.className = "subtle-link small"; view.textContent = "Public view";
     buttons.append(view); li.append(details, buttons); list.append(li);
   });

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game signup · TEAMZEUSS!!!!</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="page-header"><h1>TEAMZEUSS!!!!</h1><a class="subtle-link" href="../">All games</a></header>
+    <p id="page-message" class="message" role="status" aria-live="polite"></p>
+    <section id="game-detail" class="card detail" hidden>
+      <div class="detail-header">
+        <div><p id="league-name" class="eyebrow"></p><h2 id="game-heading"></h2><p id="game-date" class="muted"></p></div>
+        <button id="share-button" class="secondary" type="button">Copy link</button>
+      </div>
+      <p id="spot-count" class="count"></p>
+      <form id="signup-form" class="signup-form" autocomplete="off">
+        <label for="name-input">Your name</label>
+        <div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Start typing your name" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div><button id="join-button" type="submit">Join game</button></div>
+      </form>
+      <p id="signup-message" class="message" role="status" aria-live="polite"></p>
+      <div class="lists"><section><h3>In game</h3><ol id="confirmed-list"></ol></section><section><h3>Waitlist</h3><ol id="waitlist-list"></ol></section></div>
+    </section>
+  </main>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
