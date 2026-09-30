@@ -16,12 +16,18 @@
         <button id="share-button" class="secondary" type="button">Copy link</button>
       </div>
       <p id="spot-count" class="count"></p>
-      <form id="signup-form" class="signup-form" autocomplete="off">
+      <form id="name-form" class="signup-form" autocomplete="off">
         <label for="name-input">Your name</label>
-        <div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Start typing your name" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div><button id="join-button" type="submit">Join game</button></div>
+        <div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Type your name" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div><button type="submit">Continue</button></div>
       </form>
+      <div id="player-panel" hidden>
+        <p class="signed-in">Name: <strong id="selected-name"></strong> <button id="change-name" type="button" class="link-button">Change</button></p>
+        <p id="my-status" class="status-line" aria-live="polite"></p>
+        <button id="join-button" type="button">Playing</button>
+        <button id="leave-button" type="button" class="secondary" hidden>Leave</button>
+      </div>
       <p id="signup-message" class="message" role="status" aria-live="polite"></p>
-      <div class="lists"><section><h3>In game</h3><ol id="confirmed-list"></ol></section><section><h3>Waitlist</h3><ol id="waitlist-list"></ol></section></div>
+      <div class="lists"><section><h3>Playing</h3><ol id="confirmed-list"></ol></section><section><h3>Waitlist</h3><ol id="waitlist-list"></ol></section></div>
     </section>
   </main>
   <script type="module" src="game.js"></script>

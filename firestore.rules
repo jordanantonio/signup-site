@@ -82,7 +82,12 @@ service cloud.firestore {
             && getAfter(gamePath(leagueId, gameId)).data.nextPosition == request.resource.data.position + 1
             && getAfter(gamePath(leagueId, gameId)).data.lastSignupId == playerId
           );
-          allow update, delete: if isHost();
+          allow update: if isHost();
+          // Name-only sign-in has no verified identity: any visitor can leave a listed name.
+          allow delete: if isHost() || (
+            get(gamePath(leagueId, gameId)).data.status == 'open'
+            && resource.data.playerId == playerId
+          );
         }
       }
     }

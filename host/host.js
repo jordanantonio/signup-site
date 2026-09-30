@@ -119,7 +119,7 @@ function renderGames() {
     const played = (gameSignups.get(game.id) || []).filter((person) => person.attended === true).length;
     const li = document.createElement("li");
     const details = document.createElement("span");
-    details.textContent = `${game.title} · ${formatDate(game.startsAt)} · ${game.status} · ${confirmed.length} in game · ${queue.length} waitlisted · ${played} played`;
+    details.textContent = `${game.title} · ${formatDate(game.startsAt)} · ${game.status} · ${confirmed.length} playing · ${queue.length} waitlisted · ${played} played`;
     const buttons = document.createElement("div");
     buttons.append(action("Manage", "secondary small", () => manageGame(game.id)));
     buttons.append(action(game.status === "open" ? "Close" : "Reopen", "secondary small", async (event) => {
@@ -159,8 +159,8 @@ function renderManagedGame() {
         try { await updateDoc(person.ref, { attended: !person.attended }); message("Attendance updated.", true); }
         catch { message("Could not update attendance."); }
       }));
-      buttons.append(action(placement === "confirmed" ? "To waitlist" : "To game", "secondary small", async () => {
-        if (placement === "queue" && confirmed.filter((item) => item.placement === "confirmed").length >= CAPACITY) return message("All 15 in-game spots are pinned. Move someone to the waitlist first.");
+      buttons.append(action(placement === "confirmed" ? "To waitlist" : "To playing", "secondary small", async () => {
+        if (placement === "queue" && confirmed.filter((item) => item.placement === "confirmed").length >= CAPACITY) return message("All 15 playing spots are pinned. Move someone to the waitlist first.");
         try { await updateDoc(person.ref, { placement: placement === "confirmed" ? "queue" : "confirmed" }); message("Placement updated.", true); }
         catch { message("Could not move that person."); }
       }));
@@ -249,7 +249,7 @@ $("add-signup-form").addEventListener("submit", async (event) => {
   const player = players.find((item) => item.id === $("add-player").value);
   const placement = $("add-placement").value;
   if (!game || !player) return message("Choose an approved name.");
-  if (placement === "confirmed" && splitSignups(gameSignups.get(game.id) || []).confirmed.filter((item) => item.placement === "confirmed").length >= CAPACITY) return message("All 15 in-game spots are pinned. Move someone to the waitlist first.");
+  if (placement === "confirmed" && splitSignups(gameSignups.get(game.id) || []).confirmed.filter((item) => item.placement === "confirmed").length >= CAPACITY) return message("All 15 playing spots are pinned. Move someone to the waitlist first.");
   const button = event.currentTarget.querySelector("button"); button.disabled = true;
   try {
     const gameRef = doc(db, "leagues", leagueId, "games", game.id);
@@ -263,7 +263,7 @@ $("add-signup-form").addEventListener("submit", async (event) => {
       tx.update(gameRef, { nextPosition: position + 1, lastSignupId: player.id });
       tx.set(signupRef, { playerId: player.id, name: playerDoc.data().name, position, placement, attended: false, createdAt: serverTimestamp() });
     });
-    $("add-player").value = ""; message(`${player.name} added to ${placement === "confirmed" ? "the game" : "the waitlist"}.`, true);
+    $("add-player").value = ""; message(`${player.name} added to ${placement === "confirmed" ? "playing" : "the waitlist"}.`, true);
   } catch (error) { message(error.message || "Could not add person."); }
   finally { button.disabled = false; }
 });

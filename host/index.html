@@ -12,13 +12,13 @@
     <div id="league-admin" hidden>
       <div class="host-layout">
         <section class="card"><h2>League roster</h2><form id="roster-form" class="stack"><div><label for="roster-names">Allowed names, one per line</label><textarea id="roster-names" rows="5" placeholder="Alex Smith&#10;Jordan Lee&#10;Taylor Chen" required></textarea></div><button type="submit">Add names</button></form><p class="hint">Only these names can join games in this league. You can paste a whole list.</p><ul id="roster-list" class="roster-list"></ul></section>
-        <section class="card"><h2>Create game</h2><form id="game-form" class="stack"><div><label for="game-title">Game name</label><input id="game-title" maxlength="80" placeholder="Week 1" required></div><div><label for="game-time">Date and time</label><input id="game-time" type="datetime-local" required></div><button type="submit">Create game</button></form><p class="hint">Games start with 15 available in-game spots.</p></section>
+        <section class="card"><h2>Create game</h2><form id="game-form" class="stack"><div><label for="game-title">Game name</label><input id="game-title" maxlength="80" placeholder="Week 1" required></div><div><label for="game-time">Date and time</label><input id="game-time" type="datetime-local" required></div><button type="submit">Create game</button></form><p class="hint">Games have 15 playing spots.</p></section>
       </div>
       <section class="card"><h2>Games and attendance</h2><ul id="admin-game-list" class="admin-game-list"></ul></section>
       <section id="manage-panel" class="card" hidden><div class="detail-header"><div><p class="eyebrow">Manage game</p><h2 id="manage-title"></h2></div><button id="manage-close" type="button" class="secondary">Close</button></div>
-        <form id="add-signup-form" class="inline-form"><select id="add-player" aria-label="Player to add" required></select><select id="add-placement" aria-label="Add to"><option value="confirmed">In game</option><option value="queue">Waitlist</option></select><button type="submit">Add person</button></form>
-        <p class="hint">The first 15 regular signups enter the game. You can move someone into the game or hold them on the waitlist.</p>
-        <div class="lists"><section><h3>In game</h3><ul id="manage-confirmed" class="admin-game-list"></ul></section><section><h3>Waitlist</h3><ul id="manage-queue" class="admin-game-list"></ul></section></div>
+        <form id="add-signup-form" class="inline-form"><select id="add-player" aria-label="Player to add" required></select><select id="add-placement" aria-label="Add to"><option value="confirmed">Playing</option><option value="queue">Waitlist</option></select><button type="submit">Add person</button></form>
+        <p class="hint">The first 15 regular signups are playing. You can move someone to playing or hold them on the waitlist.</p>
+        <div class="lists"><section><h3>Playing</h3><ul id="manage-confirmed" class="admin-game-list"></ul></section><section><h3>Waitlist</h3><ul id="manage-queue" class="admin-game-list"></ul></section></div>
       </section>
     </div>
   </div>
