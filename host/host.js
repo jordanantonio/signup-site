@@ -194,7 +194,11 @@ $("league-form").addEventListener("submit", async (event) => {
   try {
     const ref = await addDoc(collection(db, "leagues"), { title, createdAt: serverTimestamp() });
     event.currentTarget.reset(); selectLeague(ref.id); message("League created.", true);
-  } catch { message("Could not create league. Check the Firestore rules."); }
+  } catch (error) {
+    const code = error.code || "unknown error";
+    message(`Could not create league (${code}). ${code === "permission-denied" ? "Publish the updated firestore.rules in Firebase." : "Check the browser console for details."}`);
+    console.error("Create league failed:", error);
+  }
   finally { button.disabled = false; }
 });
 

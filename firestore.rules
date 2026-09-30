@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isHost() {
-      return request.auth != null && request.auth.uid == 'QpCjrfPuFkcgZ6qNMgVHyxsRWL13';
+      return request.auth != null && request.auth.uid == 'mnUKdjfR8HWqUmBERvgF7G82heh2';
     }
 
     function gamePath(leagueId, gameId) {

@@ -1,0 +1,11 @@
+# Local credentials and generated files: never commit these.
+.env
+.env.*
+!.env.example
+*service-account*.json
+*serviceAccount*.json
+*.pem
+*.key
+node_modules/
+.firebase/
+firebase-debug.log
