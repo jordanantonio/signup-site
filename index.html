@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Basketball leagues</title><link rel="stylesheet" href="style.css"></head>
+<body><main class="container">
+  <header class="page-header"><div><p class="eyebrow">Basketball signup</p><h1>Find your league</h1><p class="muted">Choose your league and game, then select your name from its roster.</p></div><a class="subtle-link" href="host/">Admin</a></header>
+  <p id="page-message" class="message" role="status" aria-live="polite"></p>
+  <section id="league-picker"><h2>Leagues</h2><div id="league-list" class="game-grid"><p class="muted">Loading leagues…</p></div></section>
+  <section id="league-view" hidden><div class="detail-header"><div><p class="eyebrow">League</p><h2 id="league-title"></h2></div><button id="back-leagues" class="secondary" type="button">All leagues</button></div>
+    <section><h2>Open games</h2><div id="open-games" class="game-grid"></div></section>
+    <section><h2>Previous games</h2><div id="past-games" class="game-grid"></div></section>
+    <section id="game-detail" class="card detail" hidden><div class="detail-header"><div><p id="game-state" class="eyebrow"></p><h2 id="game-heading"></h2><p id="game-date" class="muted"></p></div><button id="back-games" class="secondary" type="button">All games</button></div>
+      <p id="spot-count" class="count"></p>
+      <form id="signup-form" class="signup-form" autocomplete="off"><label for="name-input">Your name</label><div class="signup-row"><div class="name-field"><input id="name-input" type="text" maxlength="80" placeholder="Start typing your league name" role="combobox" aria-autocomplete="list" aria-controls="name-options" aria-expanded="false" required><ul id="name-options" class="name-options" role="listbox" hidden></ul></div><button id="join-button" type="submit">Join game</button></div><p class="hint">Only names on this league's roster can join. Each name can join once per game.</p></form>
+      <p id="signup-message" class="message" role="status" aria-live="polite"></p><div class="lists"><section><h3>In game</h3><ol id="confirmed-list"></ol></section><section><h3>Waitlist</h3><ol id="waitlist-list"></ol></section></div>
+    </section>
+  </section>
+</main><script type="module" src="script.js"></script></body></html>

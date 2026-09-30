@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isHost() {
+      return request.auth != null && request.auth.uid == 'QpCjrfPuFkcgZ6qNMgVHyxsRWL13';
+    }
+
+    function gamePath(leagueId, gameId) {
+      return /databases/$(database)/documents/leagues/$(leagueId)/games/$(gameId);
+    }
+
+    function signupPath(leagueId, gameId, playerId) {
+      return /databases/$(database)/documents/leagues/$(leagueId)/games/$(gameId)/signups/$(playerId);
+    }
+
+    function playerPath(leagueId, playerId) {
+      return /databases/$(database)/documents/leagues/$(leagueId)/players/$(playerId);
+    }
+
+    match /leagues/{leagueId} {
+      allow read: if true;
+      allow create: if isHost()
+        && request.resource.data.keys().hasAll(['title', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['title', 'createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 100
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+
+      match /players/{playerId} {
+        allow read: if true;
+        allow create, update: if isHost()
+          && request.resource.data.keys().hasAll(['name', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 80;
+        allow delete: if isHost();
+      }
+
+      match /games/{gameId} {
+        allow read: if true;
+        allow create: if isHost()
+          && request.resource.data.keys().hasAll(['title', 'startsAt', 'status', 'capacity', 'nextPosition', 'lastSignupId', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['title', 'startsAt', 'status', 'capacity', 'nextPosition', 'lastSignupId', 'createdAt'])
+          && request.resource.data.title is string
+          && request.resource.data.title.size() > 0
+          && request.resource.data.title.size() <= 80
+          && request.resource.data.startsAt is string
+          && request.resource.data.startsAt.size() == 16
+          && request.resource.data.status == 'open'
+          && request.resource.data.capacity == 15
+          && request.resource.data.nextPosition == 0
+          && request.resource.data.lastSignupId == ''
+          && request.resource.data.createdAt == request.time;
+        allow update: if isHost() || (
+          resource.data.status == 'open'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nextPosition', 'lastSignupId'])
+          && request.resource.data.nextPosition == resource.data.nextPosition + 1
+          && request.resource.data.lastSignupId is string
+          && getAfter(signupPath(leagueId, gameId, request.resource.data.lastSignupId)).data.playerId == request.resource.data.lastSignupId
+          && getAfter(signupPath(leagueId, gameId, request.resource.data.lastSignupId)).data.position == resource.data.nextPosition
+          && getAfter(signupPath(leagueId, gameId, request.resource.data.lastSignupId)).data.placement == 'auto'
+          && getAfter(signupPath(leagueId, gameId, request.resource.data.lastSignupId)).data.createdAt == request.time
+        );
+        allow delete: if false;
+
+        match /signups/{playerId} {
+          allow read: if true;
+          allow create: if isHost() || (
+            exists(playerPath(leagueId, playerId))
+            && get(gamePath(leagueId, gameId)).data.status == 'open'
+            && request.resource.data.keys().hasAll(['playerId', 'name', 'position', 'placement', 'attended', 'createdAt'])
+            && request.resource.data.keys().hasOnly(['playerId', 'name', 'position', 'placement', 'attended', 'createdAt'])
+            && request.resource.data.playerId == playerId
+            && request.resource.data.name == get(playerPath(leagueId, playerId)).data.name
+            && request.resource.data.position == get(gamePath(leagueId, gameId)).data.nextPosition
+            && request.resource.data.placement == 'auto'
+            && request.resource.data.attended == false
+            && request.resource.data.createdAt == request.time
+            && getAfter(gamePath(leagueId, gameId)).data.nextPosition == request.resource.data.position + 1
+            && getAfter(gamePath(leagueId, gameId)).data.lastSignupId == playerId
+          );
+          allow update, delete: if isHost();
+        }
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

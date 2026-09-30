@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin · Basketball leagues</title><link rel="stylesheet" href="../style.css"></head>
+<body><main class="container">
+  <header class="page-header"><div><p class="eyebrow">Basketball signup</p><h1>Admin panel</h1><p class="muted">Create leagues, set rosters, and manage games.</p></div><a class="subtle-link" href="../">Public site</a></header>
+  <p id="host-message" class="message" role="status" aria-live="polite"></p>
+  <section id="login-panel" class="card" style="max-width:480px"><h2>Admin password</h2><form id="login-form" class="stack"><div><label for="password">Password</label><input id="password" type="password" required autocomplete="current-password"></div><button type="submit">Unlock admin panel</button></form></section>
+  <div id="admin-panel" hidden>
+    <div class="host-toolbar"><p class="muted">Admin access</p><button id="signout-button" type="button" class="secondary">Lock panel</button></div>
+    <section class="card"><h2>Create league</h2><form id="league-form" class="inline-form"><input id="league-title-input" maxlength="100" placeholder="UofA 5v5 Rec League 2026" aria-label="League name" required><button type="submit">Create league</button></form></section>
+    <section class="card"><h2>Choose a league</h2><label for="league-select">League</label><select id="league-select"><option value="">Select a league</option></select></section>
+    <div id="league-admin" hidden>
+      <div class="host-layout">
+        <section class="card"><h2>League roster</h2><form id="roster-form" class="stack"><div><label for="roster-names">Allowed names, one per line</label><textarea id="roster-names" rows="5" placeholder="Alex Smith&#10;Jordan Lee&#10;Taylor Chen" required></textarea></div><button type="submit">Add names</button></form><p class="hint">Only these names can join games in this league. You can paste a whole list.</p><ul id="roster-list" class="roster-list"></ul></section>
+        <section class="card"><h2>Create game</h2><form id="game-form" class="stack"><div><label for="game-title">Game name</label><input id="game-title" maxlength="80" placeholder="Week 1" required></div><div><label for="game-time">Date and time</label><input id="game-time" type="datetime-local" required></div><button type="submit">Create game</button></form><p class="hint">Games start with 15 available in-game spots.</p></section>
+      </div>
+      <section class="card"><h2>Games and attendance</h2><ul id="admin-game-list" class="admin-game-list"></ul></section>
+      <section id="manage-panel" class="card" hidden><div class="detail-header"><div><p class="eyebrow">Manage game</p><h2 id="manage-title"></h2></div><button id="manage-close" type="button" class="secondary">Close</button></div>
+        <form id="add-signup-form" class="inline-form"><select id="add-player" aria-label="Player to add" required></select><select id="add-placement" aria-label="Add to"><option value="confirmed">In game</option><option value="queue">Waitlist</option></select><button type="submit">Add person</button></form>
+        <p class="hint">The first 15 regular signups enter the game. Admin placements can move someone into the game or hold them on the waitlist.</p>
+        <div class="lists"><section><h3>In game</h3><ul id="manage-confirmed" class="admin-game-list"></ul></section><section><h3>Waitlist</h3><ul id="manage-queue" class="admin-game-list"></ul></section></div>
+      </section>
+    </div>
+  </div>
+</main><script type="module" src="host.js"></script></body></html>
