@@ -123,9 +123,10 @@ function renderGames() {
     const buttons = document.createElement("div");
     buttons.append(action("Manage", "secondary small", () => manageGame(game.id)));
     buttons.append(action(game.status === "open" ? "Close" : "Reopen", "secondary small", async (event) => {
-      event.currentTarget.disabled = true;
+      const button = event.currentTarget;
+      button.disabled = true;
       try { await updateDoc(doc(db, "leagues", leagueId, "games", game.id), { status: game.status === "open" ? "closed" : "open" }); message("Game updated.", true); }
-      catch { message("Could not update this game."); event.currentTarget.disabled = false; }
+      catch { message("Could not update this game."); button.disabled = false; }
     }));
     const view = document.createElement("a");
     view.href = `../#${new URLSearchParams({ league: leagueId, game: game.id })}`;
@@ -189,11 +190,12 @@ $("manage-close").addEventListener("click", () => { manageGameId = null; $("mana
 
 $("league-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  const form = event.currentTarget;
   const title = $("league-title-input").value.trim(); if (!title) return;
-  const button = event.currentTarget.querySelector("button"); button.disabled = true;
+  const button = form.querySelector("button"); button.disabled = true;
   try {
     const ref = await addDoc(collection(db, "leagues"), { title, createdAt: serverTimestamp() });
-    event.currentTarget.reset(); selectLeague(ref.id); message("League created.", true);
+    form.reset(); selectLeague(ref.id); message("League created.", true);
   } catch (error) {
     const code = error.code || "unknown error";
     message(`Could not create league (${code}). ${code === "permission-denied" ? "Publish the updated firestore.rules in Firebase." : "Check the browser console for details."}`);
@@ -204,6 +206,7 @@ $("league-form").addEventListener("submit", async (event) => {
 
 $("roster-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  const form = event.currentTarget;
   if (!leagueId) return;
   const names = $("roster-names").value.split(/\r?\n/).map((name) => name.trim().replace(/\s+/g, " ")).filter(Boolean);
   if (!names.length) return;
@@ -215,26 +218,27 @@ $("roster-form").addEventListener("submit", async (event) => {
     if (!existing.has(id)) { additions.push({ id, name }); existing.add(id); }
   }
   if (!additions.length) return message("All of those names are already on this roster.");
-  const button = event.currentTarget.querySelector("button"); button.disabled = true;
+  const button = form.querySelector("button"); button.disabled = true;
   try {
     for (let offset = 0; offset < additions.length; offset += 400) {
       const batch = writeBatch(db);
       additions.slice(offset, offset + 400).forEach(({ id, name }) => batch.set(doc(db, "leagues", leagueId, "players", id), { name, createdAt: serverTimestamp() }));
       await batch.commit();
     }
-    event.currentTarget.reset(); message(`${additions.length} name${additions.length === 1 ? "" : "s"} added.`, true);
+    form.reset(); message(`${additions.length} name${additions.length === 1 ? "" : "s"} added.`, true);
   } catch { message("Could not add all names. Refresh the roster before trying again."); }
   finally { button.disabled = false; }
 });
 
 $("game-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  const form = event.currentTarget;
   const title = $("game-title").value.trim(), startsAt = $("game-time").value;
   if (!title || !startsAt || !leagueId) return;
-  const button = event.currentTarget.querySelector("button"); button.disabled = true;
+  const button = form.querySelector("button"); button.disabled = true;
   try {
     await addDoc(collection(db, "leagues", leagueId, "games"), { title, startsAt, status: "open", capacity: CAPACITY, nextPosition: 0, lastSignupId: "", createdAt: serverTimestamp() });
-    event.currentTarget.reset(); message("Game created.", true);
+    form.reset(); message("Game created.", true);
   } catch { message("Could not create game."); }
   finally { button.disabled = false; }
 });
