@@ -37,6 +37,7 @@ function render() {
     const place = confirmed.findIndex((person) => person.id === activePlayer.id);
     const wait = queue.findIndex((person) => person.id === activePlayer.id);
     $("my-status").textContent = signup ? (place >= 0 ? `You are playing (#${place + 1}).` : `You are on the waitlist (#${wait + 1}).`) : "You have not joined this game.";
+    $("join-button").textContent = confirmed.length >= CAPACITY ? "Join waitlist" : "Playing";
     $("join-button").hidden = !!signup || game.status !== "open";
     $("leave-button").hidden = !signup || game.status !== "open";
   }
